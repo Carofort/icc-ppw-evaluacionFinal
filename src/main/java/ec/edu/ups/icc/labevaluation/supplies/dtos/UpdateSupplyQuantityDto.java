@@ -6,5 +6,8 @@ import jakarta.validation.constraints.NotNull;
 public record UpdateSupplyQuantityDto(
  @NotNull @Min(0) Integer quantity) {
 
+    public Integer getQuantity() {
+        return quantity;
+    }
      
 }

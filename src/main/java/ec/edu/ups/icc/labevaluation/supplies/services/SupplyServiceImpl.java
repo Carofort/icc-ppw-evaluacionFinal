@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+
+import ec.edu.ups.icc.labevaluation.core.exceptions.domain.NotFoundException;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.CreateSupplyDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.SupplyResponseDto;
+import ec.edu.ups.icc.labevaluation.supplies.dtos.UpdateSupplyQuantityDto;
 import ec.edu.ups.icc.labevaluation.supplies.entities.SupplyEntity;
 import ec.edu.ups.icc.labevaluation.supplies.mappers.SupplyMapper;
 import ec.edu.ups.icc.labevaluation.supplies.repositories.SupplyRepository;
@@ -47,4 +50,14 @@ public class SupplyServiceImpl implements SupplyService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public SupplyResponseDto updateQuantity(Long id, UpdateSupplyQuantityDto dto) {
+        SupplyEntity entity = repository.findById(id)
+                .filter(s -> !s.isDeleted())
+                .orElseThrow(() -> new NotFoundException("SUPPLY_NOT_FOUND", "Supply not found"));
+
+        entity.setQuantity(dto.getQuantity());
+        SupplyEntity saved = repository.save(entity);
+        return SupplyMapper.toDto(saved);
+    }
 }
