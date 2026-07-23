@@ -1,6 +1,7 @@
 package ec.edu.ups.icc.labevaluation.supplies.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.CreateSupplyDto;
@@ -13,15 +14,15 @@ import ec.edu.ups.icc.labevaluation.supplies.repositories.SupplyRepository;
 public class SupplyServiceImpl implements SupplyService {
 
     private final SupplyRepository repository;
-    
+
     public SupplyServiceImpl(SupplyRepository repository) {
         this.repository = repository;
     }
 
     @Override
     public SupplyResponseDto create(CreateSupplyDto dto) {
-        // if (repository.existsByNameIgnoreCaseAndDeletedFalse(dto.getName())) {    
-        //}
+        // if (repository.existsByNameIgnoreCaseAndDeletedFalse(dto.getName())) {
+        // }
 
         SupplyEntity entity = new SupplyEntity();
         entity.setName(dto.getName());
@@ -29,11 +30,21 @@ public class SupplyServiceImpl implements SupplyService {
         entity.setQuantity(dto.getQuantity());
         entity.setMinimumStock(dto.getMinimumStock());
         entity.setUnitPrice(dto.getUnitPrice());
-        entity.setActive(true);  
+        entity.setActive(true);
         entity.setDeleted(false);
 
         SupplyEntity saved = repository.save(entity);
         return SupplyMapper.toDto(saved);
     }
-    
+
+    @Override
+    public List<SupplyResponseDto> getLowStock(Integer maxQuantity) {
+        List<SupplyEntity> supplies = repository
+                .findByActiveTrueAndDeletedFalseAndQuantityLessThanOrderByQuantityAsc(maxQuantity);
+
+        return supplies.stream()
+                .map(SupplyMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

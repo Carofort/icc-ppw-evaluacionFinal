@@ -14,8 +14,9 @@ public final class UserMapper {
 
     public static UserEligibleResponseDto toEligibleDto(UserEntity entity) {
     Set<String> roleNames = entity.getRoles().stream()
-            .map(RoleEntity::getFullName)
+            .map(RoleEntity::getName)
             .collect(Collectors.toSet());
+            
     return new UserEligibleResponseDto(
             entity.getId(), entity.getFullName(), entity.getEmail(),
             entity.getAge(), entity.isActive(), roleNames
