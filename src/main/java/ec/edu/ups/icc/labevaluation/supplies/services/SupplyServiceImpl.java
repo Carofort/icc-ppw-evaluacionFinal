@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import ec.edu.ups.icc.labevaluation.core.exceptions.domain.NotFoundException;
+import ec.edu.ups.icc.labevaluation.core.exceptions.domain.SupplyConflictException;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.CreateSupplyDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.SupplyResponseDto;
 import ec.edu.ups.icc.labevaluation.supplies.dtos.UpdateSupplyQuantityDto;
@@ -24,8 +25,9 @@ public class SupplyServiceImpl implements SupplyService {
 
     @Override
     public SupplyResponseDto create(CreateSupplyDto dto) {
-        // if (repository.existsByNameIgnoreCaseAndDeletedFalse(dto.getName())) {
-        // }
+        if (repository.existsByNameIgnoreCaseAndDeletedFalse(dto.getName())) {
+            throw new SupplyConflictException("Supply name already exists");
+        }
 
         SupplyEntity entity = new SupplyEntity();
         entity.setName(dto.getName());
@@ -67,7 +69,9 @@ public class SupplyServiceImpl implements SupplyService {
                 .filter(s -> !s.isDeleted())
                 .orElseThrow(() -> new NotFoundException("SUPPLY_NOT_FOUND", "Supply not found"));
 
-        // if (entity.getQuantity() > 0) {}
+        if (entity.getQuantity() > 0) {
+            throw new SupplyConflictException("Supply cannot be deleted while cuantity is greater than zero");
+        }
 
         entity.setDeleted(true);
         entity.setActive(false);

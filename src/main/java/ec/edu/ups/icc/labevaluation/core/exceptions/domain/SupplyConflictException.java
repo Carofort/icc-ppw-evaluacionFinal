@@ -6,9 +6,10 @@ import ec.edu.ups.icc.labevaluation.core.exceptions.base.ApplicationException;
 
 public class SupplyConflictException extends ApplicationException {
 
-    protected SupplyConflictException(HttpStatus status, String code, String message) {
-        super(status, code, message);
-        //TODO Auto-generated constructor stub
+    public SupplyConflictException(String code, String message) {
+        super(HttpStatus.CONFLICT, code, message);
     }
-    
+    public SupplyConflictException(String message) {
+        this("SUPPLY_CONFLICT", message);
+    }
 }
