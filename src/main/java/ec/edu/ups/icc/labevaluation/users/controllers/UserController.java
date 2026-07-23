@@ -10,6 +10,7 @@ public class UserController {
     private final UserService service;
     public UserController(UserService service){this.service=service;}
     
-    @GetMapping("/eligible") @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')") 
+    @GetMapping("/eligible")
     public List<UserEligibleResponseDto> findEligible(){return service.getEligibleUsers();}
 }
