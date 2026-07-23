@@ -60,4 +60,17 @@ public class SupplyServiceImpl implements SupplyService {
         SupplyEntity saved = repository.save(entity);
         return SupplyMapper.toDto(saved);
     }
+
+    @Override
+    public void delete(Long id) {
+        SupplyEntity entity = repository.findById(id)
+                .filter(s -> !s.isDeleted())
+                .orElseThrow(() -> new NotFoundException("SUPPLY_NOT_FOUND", "Supply not found"));
+
+        // if (entity.getQuantity() > 0) {}
+
+        entity.setDeleted(true);
+        entity.setActive(false);
+        repository.save(entity);
+    }
 }
